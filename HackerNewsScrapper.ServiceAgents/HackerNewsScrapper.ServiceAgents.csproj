@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="dcsoup" Version="1.0.0" />
+    <PackageReference Include="Polly" Version="6.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HackerNewsScrapper.Common\HackerNewsScrapper.Common.csproj" />
+    <ProjectReference Include="..\HackerNewsScrapper.Entities\HackerNewsScrapper.Entities.csproj" />
+    <ProjectReference Include="..\HackerNewsScrapper.HttpClients\HackerNewsScrapper.HttpClients.csproj" />
+  </ItemGroup>
+</Project>
