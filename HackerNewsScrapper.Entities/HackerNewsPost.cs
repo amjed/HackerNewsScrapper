@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace HackerNewsScrapper.Entities
+﻿namespace HackerNewsScrapper.Entities
 {
     public class HackerNewsPost
     {

@@ -2,11 +2,8 @@
 using HackerNewsScrapper.HttpClients;
 using HackerNewsScrapper.ServiceAgents;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -45,7 +42,7 @@ namespace HackerNewsScrapper.Tests.Unit.Agents
             _hackerNewsClient.Setup(c => c.GetRawPageData(It.Is<string>(p=> p.Equals(expectedRequestString))))
                 .ReturnsAsync(respone);
             
-            var html = await _hackerNewsServiceAgent.GetDataFromPage(page);
+            var html = await _hackerNewsServiceAgent.GetDataFromPage(page).ConfigureAwait(false); ;
 
             Assert.Equal(result, html);
         }
@@ -63,7 +60,7 @@ namespace HackerNewsScrapper.Tests.Unit.Agents
             _hackerNewsClient.Setup(c => c.GetRawPageData(It.IsAny<string>()))
                 .ReturnsAsync(respone);
 
-            await _hackerNewsServiceAgent.GetDataFromPage(page);
+            await _hackerNewsServiceAgent.GetDataFromPage(page).ConfigureAwait(false); ;
 
             _hackerNewsClient.Verify(c => c.GetRawPageData(It.IsAny<string>()), Times.AtLeast(3));
         }

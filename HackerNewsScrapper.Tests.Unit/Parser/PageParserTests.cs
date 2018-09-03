@@ -1,9 +1,5 @@
 ﻿using HackerNewsScrapper.Domain.Parsers;
-using Moq;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Xunit;
 
 namespace HackerNewsScrapper.Tests.Unit.Parser
@@ -15,7 +11,7 @@ namespace HackerNewsScrapper.Tests.Unit.Parser
 
         public PageParserTests()
         {
-            _postSectionParser = new PostSectionParser(null);
+            _postSectionParser = new PostSectionParser();
             _pageParser = new PageParser(_postSectionParser);
         }
 

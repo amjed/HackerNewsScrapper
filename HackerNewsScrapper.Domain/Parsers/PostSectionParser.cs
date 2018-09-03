@@ -1,23 +1,10 @@
-﻿using HackerNewsScrapper.Common;
-using Supremes;
+﻿using Supremes;
 using System.Text.RegularExpressions;
 
 namespace HackerNewsScrapper.Domain.Parsers
 {
     public class PostSectionParser : IPostSectionParser
     {
-        private readonly IAppConfigurationProvider _appConfigurationProvider;
-        public PostSectionParser(IAppConfigurationProvider appConfigurationProvider)
-        {
-            _appConfigurationProvider = appConfigurationProvider;
-        }
-
-        private string GetTextBySelector(string html, string selector)
-        {
-            var element = Dcsoup.Parse(html);
-            return element.Select(selector).Text;
-        }
-
         public string GetAuthor(string html)
         {
             var element = Dcsoup.Parse(html);

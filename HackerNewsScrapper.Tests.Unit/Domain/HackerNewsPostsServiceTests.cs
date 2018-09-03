@@ -13,30 +13,30 @@ namespace HackerNewsScrapper.Tests.Unit.Domain
     public class HackerNewsPostsServiceTests
     {
         private readonly IHackerNewsPostsService _hackerNewsPostsService;
-        Mock<IHackerNewsServiceAgent> hackerNewsServiceAgent;
-        Mock<IPageParser> pageParser;
-        Mock<IHackerNewsPostItemValidator> hackerNewsPostItemValidator;
+        private readonly Mock<IHackerNewsServiceAgent> _hackerNewsServiceAgent;
+        private readonly Mock<IPageParser> _pageParser;
+        private readonly Mock<IHackerNewsPostItemValidator> _hackerNewsPostItemValidator;
 
         public HackerNewsPostsServiceTests()
         {
-            hackerNewsServiceAgent = new Mock<IHackerNewsServiceAgent>();
-            pageParser = new Mock<IPageParser>();
-            hackerNewsPostItemValidator = new Mock<IHackerNewsPostItemValidator>();
+            _hackerNewsServiceAgent = new Mock<IHackerNewsServiceAgent>();
+            _pageParser = new Mock<IPageParser>();
+            _hackerNewsPostItemValidator = new Mock<IHackerNewsPostItemValidator>();
 
-            pageParser.Setup(c => c.IsPageValid(It.IsAny<string>())).Returns(true);
-            hackerNewsPostItemValidator.Setup(c => c.IsValid(It.IsAny<HackerNewsPost>())).Returns(true);
+            _pageParser.Setup(c => c.IsPageValid(It.IsAny<string>())).Returns(true);
+            _hackerNewsPostItemValidator.Setup(c => c.IsValid(It.IsAny<HackerNewsPost>())).Returns(true);
 
-            _hackerNewsPostsService = new HackerNewsPostsService(hackerNewsServiceAgent.Object,
-                pageParser.Object, hackerNewsPostItemValidator.Object);
+            _hackerNewsPostsService = new HackerNewsPostsService(_hackerNewsServiceAgent.Object,
+                _pageParser.Object, _hackerNewsPostItemValidator.Object);
         }
 
         [Fact]
         public async Task ShouldRetrieveDesiredNumberOfPosts()
         {
             var desiredPosts = 30;
-            hackerNewsServiceAgent.Setup(c => c.GetDataFromPage(It.IsAny<int>())).ReturnsAsync("<html></html>");
-            pageParser.Setup(c => c.GetHackerNewsPosts(It.IsAny<string>())).Returns(GenerateData(desiredPosts));
-            var posts = await _hackerNewsPostsService.GetPosts(desiredPosts);
+            _hackerNewsServiceAgent.Setup(c => c.GetDataFromPage(It.IsAny<int>())).ReturnsAsync("<html></html>");
+            _pageParser.Setup(c => c.GetHackerNewsPosts(It.IsAny<string>())).Returns(GenerateData(desiredPosts));
+            var posts = await _hackerNewsPostsService.GetPosts(desiredPosts).ConfigureAwait(false); ;
             Assert.Equal(desiredPosts, posts.Count);
         }
 
@@ -47,12 +47,12 @@ namespace HackerNewsScrapper.Tests.Unit.Domain
             var postsPerPage = 10;
             var expectedCalls = desiredPosts / postsPerPage;
 
-            hackerNewsServiceAgent.Setup(c => c.GetDataFromPage(It.IsAny<int>())).ReturnsAsync("<html></html>");
-            pageParser.Setup(c => c.GetHackerNewsPosts(It.IsAny<string>())).Returns(GenerateData(postsPerPage));
-            var posts = await _hackerNewsPostsService.GetPosts(desiredPosts);
+            _hackerNewsServiceAgent.Setup(c => c.GetDataFromPage(It.IsAny<int>())).ReturnsAsync("<html></html>");
+            _pageParser.Setup(c => c.GetHackerNewsPosts(It.IsAny<string>())).Returns(GenerateData(postsPerPage));
+            var posts = await _hackerNewsPostsService.GetPosts(desiredPosts).ConfigureAwait(false); ;
 
             Assert.Equal(desiredPosts, posts.Count);
-            pageParser.Verify(c => c.GetHackerNewsPosts(It.IsAny<string>()), Times.Exactly(expectedCalls));
+            _pageParser.Verify(c => c.GetHackerNewsPosts(It.IsAny<string>()), Times.Exactly(expectedCalls));
 
         }
 

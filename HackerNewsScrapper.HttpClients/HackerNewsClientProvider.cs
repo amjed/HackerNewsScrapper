@@ -19,5 +19,5 @@ namespace HackerNewsScrapper.HttpClients
             var client = GetConfiguredHttpClient();            return _httpClient ?? (_httpClient = client);        }
 
 
-        private HttpClient GetConfiguredHttpClient()        {            var client = new HttpClient            {                BaseAddress = new Uri(_appConfigurationProvider.GetStringValue("HttpClientSettings:BaseUrl"))            };            client.DefaultRequestHeaders.Accept.Clear();            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));            return client;        }    }
+        private HttpClient GetConfiguredHttpClient()        {            var client = new HttpClient            {                BaseAddress = new Uri(_appConfigurationProvider.GetStringValue("HttpClientSettings:BaseUrl"))            };            return client;        }    }
 }

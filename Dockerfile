@@ -13,4 +13,4 @@ RUN dotnet publish HackerNewsScrapper.Host/HackerNewsScrapper.Host.csproj -c Rel
 FROM microsoft/dotnet:2.1-runtime AS runtime
 WORKDIR /app
 COPY --from=build /app/hackerNewsScrapper/HackerNewsScrapper.Host/out/ ./
-ENTRYPOINT ["dotnet", "HackerNewsScrapper.Host.dll", "--posts 30s"]
+ENTRYPOINT ["dotnet", "HackerNewsScrapper.Host.dll"]

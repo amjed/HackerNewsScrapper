@@ -1,8 +1,5 @@
 ﻿using HackerNewsScrapper.Domain.Validation;
 using HackerNewsScrapper.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace HackerNewsScrapper.Tests.Unit.Validation

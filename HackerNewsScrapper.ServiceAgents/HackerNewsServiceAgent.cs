@@ -14,7 +14,7 @@ namespace HackerNewsScrapper.ServiceAgents
         private readonly IHackerNewsClient _hackerNewsClient;
         private readonly IAppConfigurationProvider _appConfigurationProvider;
         
-        private readonly List<HttpStatusCode> httpStatusCodesWorthRetrying = new List<HttpStatusCode> {                HttpStatusCode.RequestTimeout,                HttpStatusCode.InternalServerError,                HttpStatusCode.BadGateway,                HttpStatusCode.ServiceUnavailable,                HttpStatusCode.GatewayTimeout,        };
+        private readonly List<HttpStatusCode> _httpStatusCodesWorthRetrying = new List<HttpStatusCode> {                HttpStatusCode.RequestTimeout,                HttpStatusCode.InternalServerError,                HttpStatusCode.BadGateway,                HttpStatusCode.ServiceUnavailable,                HttpStatusCode.GatewayTimeout,        };
 
         public HackerNewsServiceAgent(IHackerNewsClient hackerNewsClient, IAppConfigurationProvider appConfigurationProvider)
         {
@@ -28,18 +28,18 @@ namespace HackerNewsScrapper.ServiceAgents
             var delay = _appConfigurationProvider.GetIntValue("HttpClientSettings:Delay");
 
             var request = GetRequest(pageNumber);
-            var policy = Policy.Handle<HttpRequestException>()
-                .OrResult<HttpResponseMessage>(r => httpStatusCodesWorthRetrying.Contains(r.StatusCode))                .WaitAndRetryAsync(retries,                                    sleepDurationProvider: (attempt) =>                                        TimeSpan.FromMilliseconds(delay * attempt));
 
-            var policyResult = await policy.ExecuteAndCaptureAsync(async () =>
-            {
-                return await _hackerNewsClient.GetRawPageData(request);
-            }).ConfigureAwait(false);
+            //setup retry policy
+            var policy = Policy.Handle<HttpRequestException>()
+                .OrResult<HttpResponseMessage>(r => _httpStatusCodesWorthRetrying.Contains(r.StatusCode))                .WaitAndRetryAsync(retries,                                    sleepDurationProvider: (attempt) =>                                        TimeSpan.FromMilliseconds(delay * attempt));
+
+            //try & download page
+            var policyResult = await policy.ExecuteAndCaptureAsync(async () => await _hackerNewsClient.GetRawPageData(request)).ConfigureAwait(false);
 
             if (policyResult.Outcome == OutcomeType.Failure)
                 return null;
 
-            return await policyResult.Result?.Content.ReadAsStringAsync();
+            return await policyResult.Result.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
         private string GetRequest(int pageNumber)

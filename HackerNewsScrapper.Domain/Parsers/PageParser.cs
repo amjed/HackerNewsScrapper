@@ -29,8 +29,10 @@ namespace HackerNewsScrapper.Domain.Parsers
             foreach (var section in postSections)
             {
                 StringBuilder sb = new StringBuilder();
+                
+                //wrap each post html section in table
                 sb.Append("<table>")
-                    //because interesting data is in two rows
+                    //because interesting data is in two rows. take the next sibling too
                     .Append(section.OuterHtml)
                     .Append(section.NextSibling.OuterHtml)
                 .Append("</table>");

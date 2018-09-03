@@ -15,7 +15,7 @@ namespace HackerNewsScrapper.HttpClients
         public async Task<HttpResponseMessage> GetRawPageData(string request)
         {
             var client = _hackerNewsClientProvider.GetConfiguredClient();
-            return await client.GetAsync(request);
+            return await client.GetAsync(request).ConfigureAwait(false);
         }
     }
 }

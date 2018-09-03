@@ -28,18 +28,22 @@ namespace HackerNewsScrapper.Domain.Services
 
             do
             {
+                //download page
                 var pageData = await _hackerNewsServiceAgent.GetDataFromPage(currentPage++).ConfigureAwait(false);
                 if (_pageParser.IsPageValid(pageData))
                 {
+                    //parse and get all posts
                     var posts = _pageParser.GetHackerNewsPosts(pageData);
                     posts.ForEach(p =>
                     {
+                        //save only those that passes validation
                         if (_hackerNewsPostItemValidator.IsValid(p))
                             result.Add(p);
                     });
                 }
             } while (result.Count < numberOfPosts);
 
+            //return only desired number of posts
             if (result.Count > numberOfPosts)
             {
                 result = result.Take(numberOfPosts).ToList();

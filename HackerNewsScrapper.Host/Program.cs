@@ -1,20 +1,15 @@
 ﻿using AutoMapper;
 using HackerNewsScrapper.Domain.Services;
-using HackerNewsScrapper.Host.ViewModel;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using StructureMap;
 using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace HackerNewsScrapper.Host
 {
     class Program
     {
-        private static Container Container;
-        private static IConfiguration Configuration;
+        private static Container _container;
+        private static IConfiguration _configuration;
 
         static void Main(string[] args)
         {
@@ -23,7 +18,7 @@ namespace HackerNewsScrapper.Host
                 Setup(args);
 
                 var numberOfPosts = GetNumberOfPosts();
-                var postsService = Container.GetInstance<IHackerNewsPostsService>();
+                var postsService = _container.GetInstance<IHackerNewsPostsService>();
                 var component = new HackerNewsComponent(postsService, Mapper.Instance);
                 var json = component.GetPosts(numberOfPosts).GetAwaiter().GetResult();
                 Console.WriteLine(json);
@@ -41,27 +36,26 @@ namespace HackerNewsScrapper.Host
 
         static int GetNumberOfPosts()
         {
-            var strNumOfPosts = Configuration["posts"];
-            int numOfPosts = 0;
-
-            if (int.TryParse(Configuration["posts"], out numOfPosts) && numOfPosts > 0 && numOfPosts <= 100)
+            if (int.TryParse(_configuration["posts"], out var numOfPosts) && numOfPosts > 0 && numOfPosts <= 100)
             {
                 return numOfPosts;
             }
-            throw new ArgumentException("HackerNewsScrapper.Host --posts n" + Environment.NewLine + "--posts how many posts to print. A positive integer <= 100.");
+            throw new ArgumentException("hackernews --posts n" + Environment.NewLine + "--posts how many posts to print. A positive integer <= 100.");
         }
 
         static void Setup(string[] args)
         {
-            Configuration = new ConfigurationBuilder()
+            //setup configuration
+            _configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .AddCommandLine(args)
             .Build();
 
-            Container = new Container();
-            Container.Configure(config =>
+            //setup container
+            _container = new Container();
+            _container.Configure(config =>
             {
-                config.For<IConfiguration>().Use(Configuration);
+                config.For<IConfiguration>().Use(_configuration);
 
                 config.Scan(_ =>
                 {
@@ -71,6 +65,7 @@ namespace HackerNewsScrapper.Host
 
             });
 
+            //load automapper profiles
             Mapper.Initialize(cfg => cfg.AddProfiles(typeof(Program).Assembly));        }
 
     }
